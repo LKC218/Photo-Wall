@@ -45,6 +45,10 @@ npm run build
 - `/paper`：Paper 效果
 - `/spiral`：Spiral 效果
 
+## 图片资源
+
+照片墙图片素材位于 `public/images/`，由 `src/data/images.js` 的数组配置引用（与 `imgN.webp` 一一对应）。替换素材时，将图片统一转换为 `webp` 格式、按 `imgN.webp` 命名放入该目录，并同步更新 `src/data/images.js` 的引用项数。横幅装饰 `public/banner.jpg` 由 `src/three/scenes/Banner.jsx` 独立引用，不计入照片墙图片列表。详见 `docs/apps-code-map.md`。
+
 ## 后续优化方向
 
 - 将当前 Demo 整理为可配置的照片墙组件
