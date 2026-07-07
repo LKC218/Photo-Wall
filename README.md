@@ -1,14 +1,6 @@
-# Photo-Wall
+# Photo Wall
 
-Photo-Wall 是一个基于 Next.js、Three.js 和 React Three Fiber 的动态照片墙项目。当前版本以 Codrops 的 Kinetic Images 示例为基础，后续将围绕视觉组件化、性能优化、移动端降级和交互拓展继续演进。
-
-## 项目来源
-
-本项目初始代码基于以下开源示例整理而来：
-
-- 原始示例：https://github.com/DGFX/codrops-kinetic-images
-- 教程文章：https://tympanus.net/codrops/?p=96765
-- 在线演示：https://tympanus.net/Tutorials/KineticImages/
+Photo Wall 是一个基于 Next.js、Three.js 和 React Three Fiber 的动态照片墙项目，提供多种 WebGL 视觉动效，并围绕组件化、性能优化和交互拓展持续演进。
 
 ## 技术栈
 
@@ -44,6 +36,8 @@ http://localhost:3000
 ```bash
 npm run build
 ```
+
+构建产物会输出到 `out/` 目录（静态导出）。
 
 ## 可用页面
 
