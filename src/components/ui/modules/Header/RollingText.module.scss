@@ -1,0 +1,25 @@
+.rolling {
+    display: inline-block;
+}
+
+.char {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+.inner {
+    display: grid;
+}
+
+.top,
+.bottom {
+    grid-area: 1 / 1;
+    display: block;
+    white-space: pre;
+    will-change: transform;
+}
+
+.bottom {
+    color: var(--rolling-hover-color, currentColor);
+}

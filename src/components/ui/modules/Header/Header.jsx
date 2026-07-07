@@ -1,11 +1,19 @@
 import styles from './Header.module.scss';
+import RollingText from './RollingText';
 
-function Header({ children }) {
+export default function Header({ brand = '照片墙', onOpenDirectory, active = false }) {
     return (
         <div className={styles.header}>
-            <div className={styles.wrapper}>{children}</div>
+            <div className={styles.pill}>
+                <RollingText className={styles.brand} hoverColor="#ffd479">
+                    {brand}
+                </RollingText>
+                <button className={styles.directory} onClick={onOpenDirectory}>
+                    <RollingText active={active} hoverColor="#7ee0ff">
+                        主题目录
+                    </RollingText>
+                </button>
+            </div>
         </div>
     );
 }
-
-export default Header;
