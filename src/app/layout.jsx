@@ -3,16 +3,16 @@ import '@/styles/global.scss';
 import { Suspense } from 'react';
 import meta from '@/data/metadata';
 import fontFaces from '@/assets/fonts/font-faces';
-import { Layout } from '@/components/layouts/Layout';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 export const metadata = meta;
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="en">
-            <body className={`${fontFaces}`}>
+        <html lang="zh-CN" className={fontFaces}>
+            <body>
                 <Suspense>
-                    <Layout>{children}</Layout>
+                    <AppLayout>{children}</AppLayout>
                 </Suspense>
             </body>
         </html>

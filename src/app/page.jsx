@@ -1,17 +1,17 @@
 'use client';
 
-import styles from './page.module.scss';
+import styles from '@/styles/page.module.scss';
 import images from '@/data/images';
-import { Billboard, Banner } from '@/components/webgl';
+import { Billboard, Banner } from '@/three/scenes';
 import { Loader } from '@/components/ui/modules';
-import { View } from '@/webgl/View';
+import { View } from '@/three/View';
 import { PerspectiveCamera } from '@react-three/drei';
 import { useCollageTexture } from '@/hooks';
 
 const COUNT = 10;
 const GAP = 3.2;
 
-export default function Home() {
+export default function TowerPage() {
     const { texture, dimensions, isLoading } = useCollageTexture(images);
 
     if (isLoading) return <Loader />;

@@ -1,20 +1,11 @@
 import { Geist } from 'next/font/google';
 
+// Expose Geist as a CSS variable so global.scss can append a CJK fallback stack.
 const geist = Geist({
     subsets: ['latin'],
+    variable: '--font-primary',
 });
 
-const fonts = [geist];
-
-function getFontFaces() {
-    let fontFaces = '';
-    fonts.forEach((font) => {
-        fontFaces += `${font.className} `;
-    });
-
-    return fontFaces;
-}
-
-const fontFaces = getFontFaces();
+const fontFaces = geist.variable;
 
 export default fontFaces;

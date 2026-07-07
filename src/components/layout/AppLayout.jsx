@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation';
 import { Header, Footer } from '@/components/ui/modules';
 import Link from 'next/link';
 
-const Scene = dynamic(() => import('@/webgl/Scene'), { ssr: false });
+const Scene = dynamic(() => import('@/three/Canvas'), { ssr: false });
 
-export function Layout({ children }) {
+export function AppLayout({ children }) {
     const ref = useRef(null);
     const pathname = usePathname();
 
@@ -32,35 +32,7 @@ export function Layout({ children }) {
                         flexDirection: 'column',
                     }}
                 >
-                    <h1>Kinetic Images</h1>
-                    <nav
-                        style={{
-                            display: 'flex',
-                            width: '100%',
-                            gap: '0.5rem',
-                            fontSize: '0.85rem',
-                            opacity: 0.6,
-                        }}
-                    >
-                        <a href="https://tympanus.net/codrops/?p=96765">Article</a>
-                        <a href="https://github.com/DGFX/codrops-kinetic-images">Code</a>
-                        <a href="https://tympanus.net/codrops/demos/">All demos</a>
-                    </nav>
-                    <nav
-                        style={{
-                            display: 'flex',
-                            width: '100%',
-                            gap: '0.5rem',
-                            fontSize: '0.85rem',
-                            opacity: 0.6,
-                        }}
-                    >
-                        <a href="https://tympanus.net/codrops/demos/?tag=3d">#3d</a>
-                        <a href="https://tympanus.net/codrops/demos/?tag=three-js">#three.js</a>
-                        <a href="https://tympanus.net/codrops/demos/?tag=react-three-fiber">
-                            #react-three-fiber
-                        </a>
-                    </nav>
+                    <h1>照片墙</h1>
                 </div>
             </Header>
             {children}
@@ -78,13 +50,13 @@ export function Layout({ children }) {
             />
             <Footer>
                 <Link href="./" className={pathname === '/' ? 'active' : ''}>
-                    Tower
+                    塔式
                 </Link>
                 <Link href="./paper" className={pathname === '/paper' ? 'active' : ''}>
-                    Paper
+                    纸片
                 </Link>
                 <Link href="./spiral" className={pathname === '/spiral' ? 'active' : ''}>
-                    Spiral
+                    螺旋
                 </Link>
             </Footer>
         </div>

@@ -3,7 +3,6 @@
 import * as THREE from 'three';
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import '../../../webgl/materials/MeshImageMaterial';
 
 function setupCylinderTextureMapping(texture, dimensions, radius, height) {
     const cylinderCircumference = 2 * Math.PI * radius;

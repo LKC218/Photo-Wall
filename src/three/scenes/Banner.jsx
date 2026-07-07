@@ -5,8 +5,6 @@ import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 
-import '@/webgl/materials/MeshBannerMaterial';
-
 function Banner({ radius = 1.6, ...props }) {
     const ref = useRef(null);
 

@@ -2,7 +2,7 @@
 
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 import { OrbitControls, View as ViewImpl } from '@react-three/drei';
-import { Three } from '@/webgl/helpers/Three';
+import { Three } from '@/three/helpers/Tunnel';
 
 const View = forwardRef(({ children, orbit, ...props }, ref) => {
     const localRef = useRef(null);

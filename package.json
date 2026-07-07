@@ -18,9 +18,9 @@
         "three": "^0.175.0",
         "@react-three/drei": "^10.0.6",
         "@react-three/fiber": "^9.1.2",
-        "sass": "^1.86.3",
-        "scss": "^0.2.4",
-        "leva": "^0.10.0"
+    "sass": "^1.86.3",
+    "scss": "^0.2.4",
+    "tunnel-rat": "^0.1.2"
     },
     "devDependencies": {
         "eslint": "^9",

@@ -1,16 +1,16 @@
 'use client';
 
-import styles from './page.module.scss';
+import styles from '@/styles/page.module.scss';
 import images from '@/data/images';
 import { useCollageTexture } from '@/hooks';
-import { View } from '@/webgl/View';
+import { View } from '@/three/View';
 import { Loader } from '@/components/ui/modules';
-import { Paper } from '@/components/webgl';
+import { Paper } from '@/three/scenes';
 import { PerspectiveCamera } from '@react-three/drei';
 
 const paperImages = images.slice(0, 5);
 
-export default function Home() {
+export default function PaperPage() {
     const { texture, isLoading } = useCollageTexture(paperImages, {
         gap: 0,
         canvasWidth: 1024,

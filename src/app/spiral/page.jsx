@@ -1,14 +1,14 @@
 'use client';
 
-import styles from './page.module.scss';
+import styles from '@/styles/page.module.scss';
 import images from '@/data/images';
 import { PerspectiveCamera } from '@react-three/drei';
-import { View } from '@/webgl/View';
+import { View } from '@/three/View';
 import { useCollageTexture } from '@/hooks';
-import { Spiral } from '@/components/webgl';
+import { Spiral } from '@/three/scenes';
 import { Loader } from '@/components/ui/modules';
 
-export default function Home() {
+export default function SpiralPage() {
     const { texture, isLoading } = useCollageTexture(images);
 
     if (isLoading) return <Loader />;

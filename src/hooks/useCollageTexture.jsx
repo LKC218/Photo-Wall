@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getCanvasTexture } from '@/webgl/helpers/getCanvasTexture';
+import { getCanvasTexture } from '@/three/helpers/getCanvasTexture';
 
 export default function useCollageTexture(images, options = {}) {
     const [textureResults, setTextureResults] = useState(null);
