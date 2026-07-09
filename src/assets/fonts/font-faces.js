@@ -1,11 +1,16 @@
-import { Geist } from 'next/font/google';
+import { Geist, JetBrains_Mono } from 'next/font/google';
 
-// Expose Geist as a CSS variable so global.scss can append a CJK fallback stack.
 const geist = Geist({
     subsets: ['latin'],
     variable: '--font-primary',
 });
 
-const fontFaces = geist.variable;
+const jetbrainsMono = JetBrains_Mono({
+    subsets: ['latin'],
+    variable: '--font-mono',
+    weight: ['400', '500', '600', '700'],
+});
+
+const fontFaces = `${geist.variable} ${jetbrainsMono.variable}`;
 
 export default fontFaces;
