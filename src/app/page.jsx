@@ -23,7 +23,7 @@ export default function TowerPage() {
                 <PerspectiveCamera
                     makeDefault
                     fov={7}
-                    position={[0, 0, 70]}
+                    position={[0, 0, 120]}
                     near={0.01}
                     far={100000}
                 />

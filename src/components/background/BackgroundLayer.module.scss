@@ -184,9 +184,28 @@
         );
 }
 
+.tower.background::before,
+.paper.background::before {
+    background:
+        radial-gradient(
+            ellipse at 15% 12%,
+            rgba(var(--background-primary-rgb), 0.26),
+            transparent 32%
+        ),
+        radial-gradient(
+            ellipse at 88% 84%,
+            rgba(var(--background-secondary-rgb), 0.2),
+            transparent 36%
+        );
+}
+
+.tower.background::after,
+.paper.background::after {
+    background: none;
+}
+
 .tower .architecture {
-    opacity: 0.38;
-    transform: scaleX(1.08);
+    opacity: 0;
 }
 
 .tower .floatingLines {
@@ -216,20 +235,7 @@
 }
 
 .paper .architecture {
-    opacity: 0.2;
-    background:
-        linear-gradient(
-            104deg,
-            transparent 0 38%,
-            rgba(255, 255, 255, 0.12) 38.12% 38.32%,
-            transparent 38.44%
-        ),
-        linear-gradient(
-            76deg,
-            transparent 0 62%,
-            rgba(var(--background-primary-rgb), 0.14) 62.08% 62.3%,
-            transparent 62.45%
-        );
+    opacity: 0;
 }
 
 .paper .horizon {

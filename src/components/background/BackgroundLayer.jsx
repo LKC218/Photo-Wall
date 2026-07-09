@@ -1,20 +1,28 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTheme } from '@/context/ThemeContext';
 import FloatingLines2D from './FloatingLines2D';
+import FloatingLinesDebugger from '../debug/FloatingLinesDebugger';
 import styles from './BackgroundLayer.module.scss';
 
 const FLOATING_LINES_PRESET = {
-    enabledWaves: ['top', 'middle', 'bottom'],
-    lineCount: [6, 8, 10],
-    lineDistance: [8, 6, 4],
-    animationSpeed: 0.78,
+    enabledWaves: ['bottom', 'top', 'middle'],
+    lineCount: [11, 4, 9],
+    lineDistance: [7, 9, 5.5],
+    topWavePosition: { x: 9.3, y: 0.5, rotate: -0.42 },
+    middleWavePosition: { x: 11.4, y: 0.05, rotate: 0.58 },
+    bottomWavePosition: { x: 1.2, y: -0.95, rotate: 0.52 },
+    animationSpeed: 0.6,
+    interactive: false,
     bendRadius: 7,
     bendStrength: -1.15,
     mouseDamping: 0.05,
     parallax: true,
-    parallaxStrength: 0.12,
+    parallaxStrength: 1,
+    mixBlendMode: 'screen',
+    linesGradient: ['#7ee0ff', '#ffd479', '#ff9f7f', '#f6f7ff'],
 };
 
 const THEME_ACCENTS = {
@@ -121,8 +129,21 @@ function rgbStringToHex(value) {
 
 export default function BackgroundLayer({ pathname }) {
     const { activeTheme } = useTheme();
+    const searchParams = useSearchParams();
     const accent = THEME_ACCENTS[activeTheme?.id] ?? THEME_ACCENTS.default;
     const showFloatingLines = pathname === '/';
+    const isDebugMode = searchParams.get('debug') === 'floating-lines';
+
+    const [debugConfig, setDebugConfig] = useState(() => ({
+        ...FLOATING_LINES_PRESET,
+        linesGradient: [
+            rgbStringToHex(accent.secondary),
+            rgbStringToHex(accent.primary),
+            rgbStringToHex(accent.tertiary),
+            '#f6f7ff',
+        ],
+    }));
+    const activePreset = isDebugMode ? debugConfig : FLOATING_LINES_PRESET;
 
     const style = useMemo(
         () => ({
@@ -143,16 +164,6 @@ export default function BackgroundLayer({ pathname }) {
         ]
     );
 
-    const linesGradient = useMemo(
-        () => [
-            rgbStringToHex(accent.secondary),
-            rgbStringToHex(accent.primary),
-            rgbStringToHex(accent.tertiary),
-            '#f6f7ff',
-        ],
-        [accent.primary, accent.secondary, accent.tertiary]
-    );
-
     return (
         <div
             className={`${styles.background} ${getRouteClass(pathname)}`}
@@ -164,9 +175,17 @@ export default function BackgroundLayer({ pathname }) {
             {showFloatingLines && (
                 <FloatingLines2D
                     className={styles.floatingLines}
-                    linesGradient={linesGradient}
-                    {...FLOATING_LINES_PRESET}
+                    linesGradient={[
+                        rgbStringToHex(accent.secondary),
+                        rgbStringToHex(accent.primary),
+                        rgbStringToHex(accent.tertiary),
+                        '#f6f7ff',
+                    ]}
+                    {...activePreset}
                 />
+            )}
+            {isDebugMode && (
+                <FloatingLinesDebugger config={debugConfig} onChange={setDebugConfig} />
             )}
             <div className={styles.architecture} />
             <div className={styles.horizon} />
