@@ -49,8 +49,9 @@ body {
     place-items: center;
 }
 
-a {
-    &:hover {
+a,
+button {
+    &:hover:not(:disabled) {
         opacity: 0.7;
         transition: opacity 0.3s ease-in-out;
     }
@@ -58,5 +59,10 @@ a {
     &.active {
         opacity: 0.7;
         pointer-events: none;
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
     }
 }

@@ -3,30 +3,52 @@
 import * as THREE from 'three';
 import { useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
-function setupPaperMaterial(texture, material) {
-    material.map = texture;
-    material.toneMapped = false;
+function getFirstMesh(scene) {
+    let mesh = null;
+    scene.traverse((child) => {
+        if (!mesh && child.isMesh) mesh = child;
+    });
+    return mesh;
+}
+
+function createPaperMaterial(texture) {
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.needsUpdate = true;
+
+    return new THREE.MeshBasicMaterial({
+        map: texture,
+        toneMapped: false,
+        side: THREE.DoubleSide,
+    });
 }
 
 function Paper({ texture, ...props }) {
     const { scene } = useGLTF('/paper.glb');
-
-    const mesh = scene.children[0];
+    const mesh = useMemo(() => getFirstMesh(scene), [scene]);
 
     useEffect(() => {
-        if (!texture) return;
-        texture.colorSpace = THREE.SRGBColorSpace;
-        setupPaperMaterial(texture, mesh.material);
-    }, [texture, mesh.material]);
+        if (!texture || !mesh) return;
+
+        const previousMaterial = mesh.material;
+        const material = createPaperMaterial(texture);
+        mesh.material = material;
+
+        return () => {
+            mesh.material = previousMaterial;
+            material.dispose();
+        };
+    }, [texture, mesh]);
 
     useFrame((state, delta) => {
         if (!texture) return;
         texture.offset.y += delta / 30;
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
     });
+
+    if (!mesh) return null;
 
     return <primitive {...props} object={scene} />;
 }

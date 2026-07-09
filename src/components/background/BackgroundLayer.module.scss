@@ -1,0 +1,358 @@
+.background {
+    --background-primary-rgb: 255, 212, 121;
+    --background-secondary-rgb: 126, 224, 255;
+    --background-tertiary-rgb: 255, 159, 127;
+    --background-base-start: #05070a;
+    --background-base-mid: #111114;
+    --background-base-end: #060708;
+
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: linear-gradient(
+        155deg,
+        var(--background-base-start) 0%,
+        var(--background-base-mid) 48%,
+        var(--background-base-end) 100%
+    );
+}
+
+.background::before {
+    content: '';
+    position: absolute;
+    inset: -12%;
+    background:
+        radial-gradient(
+            ellipse at 15% 12%,
+            rgba(var(--background-primary-rgb), 0.26),
+            transparent 32%
+        ),
+        radial-gradient(
+            ellipse at 88% 84%,
+            rgba(var(--background-secondary-rgb), 0.2),
+            transparent 36%
+        ),
+        linear-gradient(
+            120deg,
+            rgba(var(--background-tertiary-rgb), 0.11),
+            transparent 34%,
+            rgba(255, 255, 255, 0.035) 52%,
+            transparent 70%
+        );
+    filter: blur(12px);
+    opacity: 0.92;
+}
+
+.background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        115deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.055) 46%,
+        transparent 47%,
+        transparent 100%
+    );
+    opacity: 0.58;
+}
+
+.chroma,
+.lightField,
+.floatingLines,
+.architecture,
+.horizon,
+.grid,
+.noise {
+    position: absolute;
+    inset: 0;
+}
+
+.floatingLines {
+    opacity: 0.68;
+    transform: translateZ(0);
+    mix-blend-mode: screen;
+}
+
+.floatingLines canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.chroma {
+    opacity: 0.78;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(var(--background-primary-rgb), 0.1),
+            transparent 28%,
+            rgba(var(--background-secondary-rgb), 0.08) 74%,
+            transparent
+        ),
+        radial-gradient(ellipse at 52% 44%, rgba(255, 255, 255, 0.075), transparent 34%);
+    mix-blend-mode: screen;
+}
+
+.lightField {
+    background:
+        radial-gradient(
+            ellipse at 50% 56%,
+            transparent 0%,
+            rgba(0, 0, 0, 0.2) 44%,
+            rgba(0, 0, 0, 0.74) 100%
+        ),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.095), transparent 22%, rgba(0, 0, 0, 0.32));
+}
+
+.architecture {
+    opacity: 0.32;
+    background:
+        linear-gradient(
+            118deg,
+            transparent 0 41%,
+            rgba(255, 255, 255, 0.16) 41.1% 41.35%,
+            transparent 41.45%
+        ),
+        linear-gradient(
+            62deg,
+            transparent 0 56%,
+            rgba(var(--background-primary-rgb), 0.18) 56.08% 56.3%,
+            transparent 56.45%
+        ),
+        linear-gradient(
+            90deg,
+            transparent 0 50%,
+            rgba(255, 255, 255, 0.06) 50.05% 50.15%,
+            transparent 50.25%
+        );
+    mask-image: linear-gradient(180deg, transparent 0%, black 16%, black 82%, transparent 100%);
+}
+
+.horizon {
+    top: auto;
+    height: 45%;
+    background:
+        linear-gradient(
+            180deg,
+            transparent 0%,
+            rgba(var(--background-primary-rgb), 0.08) 34%,
+            rgba(0, 0, 0, 0.2) 100%
+        ),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 24px);
+    opacity: 0.36;
+    mask-image: linear-gradient(180deg, transparent, black 32%, black);
+}
+
+.grid {
+    opacity: 0.14;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.11) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(circle at 50% 48%, black 0%, transparent 70%);
+}
+
+.noise {
+    opacity: 0.12;
+    mix-blend-mode: soft-light;
+    background-image:
+        repeating-radial-gradient(
+            circle at 12% 18%,
+            rgba(255, 255, 255, 0.18) 0 1px,
+            transparent 1px 4px
+        ),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.065) 0 1px, transparent 1px 3px);
+    background-size:
+        180px 180px,
+        6px 6px;
+}
+
+.tower {
+    background:
+        radial-gradient(
+            ellipse at 50% 43%,
+            rgba(var(--background-secondary-rgb), 0.12),
+            transparent 34%
+        ),
+        linear-gradient(
+            145deg,
+            var(--background-base-start) 0%,
+            var(--background-base-mid) 46%,
+            var(--background-base-end) 100%
+        );
+}
+
+.tower .architecture {
+    opacity: 0.38;
+    transform: scaleX(1.08);
+}
+
+.tower .floatingLines {
+    opacity: 0.72;
+    mask-image: radial-gradient(ellipse at 50% 47%, black 0%, black 54%, transparent 82%);
+}
+
+.paper {
+    background:
+        linear-gradient(130deg, rgba(var(--background-primary-rgb), 0.08), transparent 30%),
+        radial-gradient(
+            ellipse at 42% 38%,
+            rgba(var(--background-primary-rgb), 0.22),
+            transparent 34%
+        ),
+        radial-gradient(
+            ellipse at 82% 78%,
+            rgba(var(--background-secondary-rgb), 0.14),
+            transparent 38%
+        ),
+        linear-gradient(145deg, #11110e 0%, #191712 48%, #070707 100%);
+}
+
+.paper .grid {
+    opacity: 0.08;
+    background-size: 96px 96px;
+}
+
+.paper .architecture {
+    opacity: 0.2;
+    background:
+        linear-gradient(
+            104deg,
+            transparent 0 38%,
+            rgba(255, 255, 255, 0.12) 38.12% 38.32%,
+            transparent 38.44%
+        ),
+        linear-gradient(
+            76deg,
+            transparent 0 62%,
+            rgba(var(--background-primary-rgb), 0.14) 62.08% 62.3%,
+            transparent 62.45%
+        );
+}
+
+.paper .horizon {
+    opacity: 0.24;
+}
+
+.directory {
+    background:
+        radial-gradient(
+            ellipse at 18% 10%,
+            rgba(var(--background-primary-rgb), 0.18),
+            transparent 32%
+        ),
+        radial-gradient(
+            ellipse at 88% 0%,
+            rgba(var(--background-secondary-rgb), 0.1),
+            transparent 34%
+        ),
+        linear-gradient(180deg, #f4f1ec 0%, #e8e3da 100%);
+}
+
+.directory .lightField {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.58), transparent 28%),
+        radial-gradient(ellipse at 50% 100%, rgba(0, 0, 0, 0.08), transparent 62%);
+}
+
+.directory .grid,
+.directory .noise {
+    opacity: 0.08;
+}
+
+.directory .chroma {
+    opacity: 0.26;
+    mix-blend-mode: multiply;
+}
+
+.directory .architecture,
+.directory .horizon {
+    opacity: 0.12;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .background::before {
+        animation: driftLight 18s ease-in-out infinite alternate;
+    }
+
+    .architecture {
+        animation: driftStructure 28s ease-in-out infinite alternate;
+    }
+
+    .horizon {
+        animation: driftHorizon 24s ease-in-out infinite alternate;
+    }
+}
+
+@media (max-width: 768px) {
+    .grid {
+        background-size: 52px 52px;
+        opacity: 0.1;
+    }
+
+    .background::before {
+        filter: blur(10px);
+    }
+
+    .architecture {
+        opacity: 0.22;
+        transform: scale(1.18);
+    }
+
+    .horizon {
+        height: 52%;
+        opacity: 0.28;
+    }
+
+    .noise {
+        opacity: 0.09;
+    }
+
+    .floatingLines {
+        opacity: 0.48;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .background::before,
+    .architecture,
+    .horizon {
+        animation: none;
+    }
+
+    .floatingLines {
+        display: none;
+    }
+}
+
+@keyframes driftLight {
+    from {
+        transform: translate3d(-1.5%, -1%, 0) scale(1);
+    }
+
+    to {
+        transform: translate3d(1.5%, 1%, 0) scale(1.04);
+    }
+}
+
+@keyframes driftStructure {
+    from {
+        transform: translate3d(-0.8%, 0, 0);
+    }
+
+    to {
+        transform: translate3d(0.8%, 0.4%, 0);
+    }
+}
+
+@keyframes driftHorizon {
+    from {
+        transform: translate3d(0, 1.2%, 0);
+    }
+
+    to {
+        transform: translate3d(0, -1.2%, 0);
+    }
+}

@@ -35,7 +35,7 @@ function Billboard({ texture, dimensions, radius = 5, ...props }) {
 
     return (
         <mesh ref={ref} {...props}>
-            <cylinderGeometry args={[radius, radius, 2, 100, 1, true]} />
+            <cylinderGeometry args={[radius, radius, 2, 100, 1, true, Math.PI]} />
             <meshImageMaterial map={texture} side={THREE.DoubleSide} toneMapped={false} />
         </mesh>
     );
