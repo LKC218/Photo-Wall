@@ -55,12 +55,7 @@
     left: 10%;
     right: 10%;
     height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.25),
-        transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
     pointer-events: none;
 }
 
@@ -104,7 +99,8 @@
     border: none;
     background: transparent;
     color: rgba(255, 255, 255, 0.85);
-    font-family: var(--font-primary), 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    font-family:
+        var(--font-primary), 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.08em;

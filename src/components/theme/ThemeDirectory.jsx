@@ -53,7 +53,9 @@ export function ThemeDirectory({ mode = 'overlay', open, onClose, onNavigate }) 
         const part1s = listEl.querySelectorAll('[data-animate="part1"]');
         if (!traits.length && !part1s.length) return;
 
-        const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const reduced =
+            typeof window !== 'undefined' &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (reduced) {
             gsap.set(traits, { scaleX: 1 });
             gsap.set(part1s, { opacity: 1 });
@@ -67,15 +69,20 @@ export function ThemeDirectory({ mode = 'overlay', open, onClose, onNavigate }) 
 
         const tl = gsap.timeline();
         entranceTlRef.current = tl;
-        tl.to(traits, { scaleX: 1, duration: 0.6, ease: 'power4.inOut', stagger: 0.1 }, 0.2)
-          .to(part1s, { opacity: 1, duration: 0.6, ease: 'power4.inOut', stagger: 0.1 }, 0.2);
+        tl.to(traits, { scaleX: 1, duration: 0.6, ease: 'power4.inOut', stagger: 0.1 }, 0.2).to(
+            part1s,
+            { opacity: 1, duration: 0.6, ease: 'power4.inOut', stagger: 0.1 },
+            0.2
+        );
     };
 
     useEffect(() => {
         if (!contentRef.current) return;
         if (!isPage && !open) return;
 
-        const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const reduced =
+            typeof window !== 'undefined' &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         if (reduced) {
             const rows = contentRef.current.querySelectorAll('[data-animate="row"]');
@@ -108,10 +115,18 @@ export function ThemeDirectory({ mode = 'overlay', open, onClose, onNavigate }) 
 
             tl = gsap.timeline();
             tl.to(rows, { y: 0, duration: 0.72, ease: 'power3.out', stagger: 0.045 }, 0.12)
-              .to(rows, { opacity: 1, duration: 0.42, ease: 'power3.out', stagger: 0.045 }, 0.12)
-              .to(traits, { scaleX: 1, duration: 0.5, ease: 'power3.inOut', stagger: 0.045 }, 0.16)
-              .to(part1s, { opacity: 1, duration: 0.42, ease: 'power3.out', stagger: 0.045 }, 0.18)
-              .to(foot, { y: 0, duration: 0.42, ease: 'power3.out' }, 0.55);
+                .to(rows, { opacity: 1, duration: 0.42, ease: 'power3.out', stagger: 0.045 }, 0.12)
+                .to(
+                    traits,
+                    { scaleX: 1, duration: 0.5, ease: 'power3.inOut', stagger: 0.045 },
+                    0.16
+                )
+                .to(
+                    part1s,
+                    { opacity: 1, duration: 0.42, ease: 'power3.out', stagger: 0.045 },
+                    0.18
+                )
+                .to(foot, { y: 0, duration: 0.42, ease: 'power3.out' }, 0.55);
         } else {
             const rows = contentRef.current.querySelectorAll('[data-animate="row"]');
             if (!rows.length) return;
@@ -183,8 +198,7 @@ export function ThemeDirectory({ mode = 'overlay', open, onClose, onNavigate }) 
                 absolute: true,
                 onEnter: (elements) =>
                     gsap.fromTo(elements, { opacity: 0 }, { opacity: 1, duration: 0.3 }),
-                onLeave: (elements) =>
-                    gsap.to(elements, { opacity: 0, duration: 0.3 }),
+                onLeave: (elements) => gsap.to(elements, { opacity: 0, duration: 0.3 }),
                 onComplete: () => {
                     flippingRef.current = false;
                     if (nextView === 'list') runListReveal();
@@ -276,7 +290,9 @@ function Tags({ tags }) {
     return (
         <ul className={styles.tags}>
             {(tags || []).map((tag, i) => (
-                <li key={i} className={styles.tag}>{tag}</li>
+                <li key={i} className={styles.tag}>
+                    {tag}
+                </li>
             ))}
         </ul>
     );

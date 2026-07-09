@@ -1,13 +1,6 @@
 'use client';
 
-import {
-    createContext,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-    useCallback,
-} from 'react';
+import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import { usePathname } from 'next/navigation';
 import styles from './PageTransition.module.scss';
@@ -39,9 +32,7 @@ export function PageTransitionProvider({ children, onNavigate }) {
     childrenRef.current = children;
 
     useEffect(() => {
-        reducedMotionRef.current = window.matchMedia(
-            '(prefers-reduced-motion: reduce)'
-        ).matches;
+        reducedMotionRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         return () => {
             frameRefs.current.forEach((id) => cancelAnimationFrame(id));
@@ -102,12 +93,7 @@ export function PageTransitionProvider({ children, onNavigate }) {
             0
         );
 
-        tl.fromTo(
-            wipeRef.current,
-            { y: '100%' },
-            { y: '0%', duration: 0.68 },
-            0.04
-        );
+        tl.fromTo(wipeRef.current, { y: '100%' }, { y: '0%', duration: 0.68 }, 0.04);
     }, [pathname, currentPath, scheduleEnterTransition]);
 
     // 新页面进入动画
@@ -123,17 +109,9 @@ export function PageTransitionProvider({ children, onNavigate }) {
         tl.set(wipeRef.current, { y: '0%' });
 
         // 黑幕短暂停留后释放，新页面跟随遮罩平稳进入
-        tl.to(
-            wipeRef.current,
-            { y: '-100%', duration: 0.72 },
-            0.16
-        );
+        tl.to(wipeRef.current, { y: '-100%', duration: 0.72 }, 0.16);
 
-        tl.to(
-            containerRef.current,
-            { y: '0', opacity: 1, duration: 0.64 },
-            0.28
-        );
+        tl.to(containerRef.current, { y: '0', opacity: 1, duration: 0.64 }, 0.28);
     }, [currentPath, finishTransition]);
 
     const navigateWithTransition = useCallback(

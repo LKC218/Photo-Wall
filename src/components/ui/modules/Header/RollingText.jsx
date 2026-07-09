@@ -60,7 +60,12 @@ export default function RollingText({
 
         const roll = (yTop, yBottom) => {
             gsap.to(topsRef.current, { yPercent: yTop, duration, ease: 'power3.inOut', stagger });
-            gsap.to(bottomsRef.current, { yPercent: yBottom, duration, ease: 'power3.inOut', stagger });
+            gsap.to(bottomsRef.current, {
+                yPercent: yBottom,
+                duration,
+                ease: 'power3.inOut',
+                stagger,
+            });
         };
 
         // 初始位置：active 默认停在副本（高亮），否则停在原文字
@@ -92,8 +97,18 @@ export default function RollingText({
     // active 变化且当前未 hover 时，平滑过渡到目标位置
     useEffect(() => {
         if (!hoveringRef.current) {
-            gsap.to(topsRef.current, { yPercent: active ? -100 : 0, duration, ease: 'power3.inOut', stagger });
-            gsap.to(bottomsRef.current, { yPercent: active ? 0 : 100, duration, ease: 'power3.inOut', stagger });
+            gsap.to(topsRef.current, {
+                yPercent: active ? -100 : 0,
+                duration,
+                ease: 'power3.inOut',
+                stagger,
+            });
+            gsap.to(bottomsRef.current, {
+                yPercent: active ? 0 : 100,
+                duration,
+                ease: 'power3.inOut',
+                stagger,
+            });
         }
     }, [active, duration, stagger]);
 

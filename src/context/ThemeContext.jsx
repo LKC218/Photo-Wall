@@ -11,7 +11,9 @@ const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
     const [activeId, setActiveId] = useState(
-        typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_KEY) || presetThemes[0].id : presetThemes[0].id
+        typeof window !== 'undefined'
+            ? window.localStorage.getItem(STORAGE_KEY) || presetThemes[0].id
+            : presetThemes[0].id
     );
 
     const themes = presetThemes;
