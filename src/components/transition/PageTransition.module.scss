@@ -1,0 +1,35 @@
+.wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.content {
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    will-change: transform, opacity;
+}
+
+.wipe {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    z-index: 9999;
+    pointer-events: none;
+    transform: translateY(100%);
+    will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .content {
+        will-change: auto;
+    }
+
+    .wipe {
+        display: none;
+    }
+}

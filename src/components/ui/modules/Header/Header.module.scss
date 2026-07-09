@@ -1,67 +1,218 @@
 .header {
     position: fixed;
-    top: 24px;
+    top: 16px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
     color: #fff;
     pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .pill {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 2rem;
-    padding: 0.6rem 1.8rem;
+    justify-content: space-between;
+    gap: 2.4rem;
+    padding: 0.55rem 1.6rem;
     border-radius: 999px;
-    background: rgba(28, 28, 32, 0.58);
+    background: rgba(18, 18, 22, 0.35);
+    -webkit-backdrop-filter: blur(60px) saturate(200%);
+    backdrop-filter: blur(60px) saturate(200%);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.04);
     pointer-events: auto;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.pill::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    border-radius: 999px 999px 0 0;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.02) 60%,
+        transparent 100%
+    );
+    pointer-events: none;
+}
+
+.pill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.25),
+        transparent
+    );
+    pointer-events: none;
+}
+
+.scrolled .pill {
+    background: rgba(10, 10, 14, 0.65);
+    -webkit-backdrop-filter: blur(80px) saturate(220%);
+    backdrop-filter: blur(80px) saturate(220%);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 12px 48px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.left {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+}
+
+.nav {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
 }
 
 .brand {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
+    font-family: var(--font-mono), 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     white-space: nowrap;
     user-select: none;
 }
 
-.directory {
+.navItem {
     border: none;
     background: transparent;
-    color: rgba(255, 255, 255, 0.72);
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+    font-family: var(--font-primary), 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     cursor: pointer;
-    padding: 0.25rem 0;
+    padding: 0.2rem 0;
     position: relative;
-    transition: color 0.25s ease;
+    transition: color 0.3s ease;
 
     &::after {
         content: '';
         position: absolute;
         left: 0;
-        bottom: 0;
+        bottom: -2px;
         width: 100%;
         height: 1px;
-        background: rgba(255, 255, 255, 0.6);
+        background: currentColor;
         transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.3s ease;
+        transform-origin: left center;
+        transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
     &:hover {
-        color: rgba(255, 255, 255, 0.95);
+        color: rgba(255, 255, 255, 1);
 
         &::after {
             transform: scaleX(1);
+        }
+    }
+}
+
+.menuBtn {
+    position: relative;
+    z-index: 1;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.3rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+
+    svg {
+        width: 18px;
+        height: 18px;
+        transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    &:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.12);
+
+        svg {
+            transform: scale(1.08);
+        }
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .pill {
+        background: rgba(18, 18, 22, 0.85);
+    }
+
+    .scrolled .pill {
+        background: rgba(10, 10, 14, 0.92);
+    }
+}
+
+@media (max-width: 768px) {
+    .pill {
+        padding: 0.45rem 1rem;
+        gap: 1.2rem;
+    }
+
+    .brand {
+        font-size: 12px;
+        letter-spacing: 0.14em;
+    }
+
+    .nav {
+        gap: 0.9rem;
+    }
+
+    .navItem {
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        padding: 0.15rem 0;
+
+        &:nth-child(2),
+        &:nth-child(3) {
+            display: none;
+        }
+    }
+
+    .menuBtn {
+        margin-left: 0;
+        padding: 0.2rem;
+
+        svg {
+            width: 16px;
+            height: 16px;
         }
     }
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import styles from '@/styles/page.module.scss';
 import { useCollageTexture } from '@/hooks';
 import { View } from '@/three/View';
@@ -10,7 +11,7 @@ import { useTheme } from '@/context/ThemeContext';
 
 export default function PaperPage() {
     const { activeTheme } = useTheme();
-    const paperImages = activeTheme.images.slice(0, 5);
+    const paperImages = useMemo(() => activeTheme.images.slice(0, 5), [activeTheme.images]);
 
     const { texture, isLoading } = useCollageTexture(paperImages, {
         gap: 0,
