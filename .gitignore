@@ -52,6 +52,9 @@ next-env.d.ts
 # tool memory / private data
 .workbuddy/
 
+# local runtime logs
+.local/
+
 # unity generated files
 Library/
 Temp/
