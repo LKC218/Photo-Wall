@@ -165,19 +165,19 @@ docs/背景效果/Three-背景效果模块说明.md
 
 ### 4.2 Props 说明
 
-| 属性 | 类型 | 默认值 | 说明 |
-|---|---|---|---|
-| `linesGradient` | `string[]` | Photo-Wall 预设色 | 线条渐变色，最多建议 8 个颜色 |
-| `enabledWaves` | `Array<'top' \| 'middle' \| 'bottom'>` | `['top','middle','bottom']` | 启用的波浪层 |
-| `lineCount` | `number \| number[]` | `[4,5,7]` | 每层线条数量 |
-| `lineDistance` | `number \| number[]` | `[0.18,0.16,0.14]` | 每层线条间距，使用 Three 世界坐标 |
-| `animationSpeed` | `number` | `0.55` | 动画速度倍率 |
-| `interactive` | `boolean` | `true` | 是否响应鼠标弯曲 |
-| `bendRadius` | `number` | `1.15` | 鼠标影响半径 |
-| `bendStrength` | `number` | `-0.38` | 弯曲强度 |
-| `mouseDamping` | `number` | `0.055` | 鼠标平滑阻尼 |
-| `parallax` | `boolean` | `true` | 是否启用视差 |
-| `parallaxStrength` | `number` | `0.16` | 视差强度 |
+| 属性               | 类型                                   | 默认值                      | 说明                              |
+| ------------------ | -------------------------------------- | --------------------------- | --------------------------------- |
+| `linesGradient`    | `string[]`                             | Photo-Wall 预设色           | 线条渐变色，最多建议 8 个颜色     |
+| `enabledWaves`     | `Array<'top' \| 'middle' \| 'bottom'>` | `['top','middle','bottom']` | 启用的波浪层                      |
+| `lineCount`        | `number \| number[]`                   | `[4,5,7]`                   | 每层线条数量                      |
+| `lineDistance`     | `number \| number[]`                   | `[0.18,0.16,0.14]`          | 每层线条间距，使用 Three 世界坐标 |
+| `animationSpeed`   | `number`                               | `0.55`                      | 动画速度倍率                      |
+| `interactive`      | `boolean`                              | `true`                      | 是否响应鼠标弯曲                  |
+| `bendRadius`       | `number`                               | `1.15`                      | 鼠标影响半径                      |
+| `bendStrength`     | `number`                               | `-0.38`                     | 弯曲强度                          |
+| `mouseDamping`     | `number`                               | `0.055`                     | 鼠标平滑阻尼                      |
+| `parallax`         | `boolean`                              | `true`                      | 是否启用视差                      |
+| `parallaxStrength` | `number`                               | `0.16`                      | 视差强度                          |
 
 ### 4.3 与 ReactBits 参数差异
 
@@ -463,8 +463,7 @@ z: -1 到 1
     height: 100svh;
     overflow: hidden;
     background:
-        radial-gradient(circle at 50% 48%, rgba(59, 130, 246, 0.12), transparent 46%),
-        #020617;
+        radial-gradient(circle at 50% 48%, rgba(59, 130, 246, 0.12), transparent 46%), #020617;
 }
 ```
 
@@ -715,19 +714,11 @@ const REACTBITS_LIKE_PRESET = {
 
 ```jsx
 <View className={styles.view} orbit>
-    <PerspectiveCamera
-        makeDefault
-        fov={7}
-        position={[0, 0, 70]}
-        near={0.01}
-        far={100000}
-    />
+    <PerspectiveCamera makeDefault fov={7} position={[0, 0, 70]} near={0.01} far={100000} />
 
     <FloatingLines />
 
-    <group rotation={[-0.15, 0, -0.2]}>
-        {/* Billboard + Banner */}
-    </group>
+    <group rotation={[-0.15, 0, -0.2]}>{/* Billboard + Banner */}</group>
 </View>
 ```
 

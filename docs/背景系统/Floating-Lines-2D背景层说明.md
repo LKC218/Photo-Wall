@@ -57,6 +57,33 @@ AppLayout
 />
 ```
 
+## 可视化调试面板
+
+为便于快速迭代 FloatingLines 动效参数，项目提供了开发态可视化调节面板：
+
+- **触发方式**：首页访问 `/?debug=floating-lines`。
+- **组件位置**：`src/components/debug/FloatingLinesDebugger.jsx`。
+- **集成方式**：`BackgroundLayer.jsx` 检测到 `debug=floating-lines` 后，将 `FLOATING_LINES_PRESET` 替换为调试面板维护的实时配置，并渲染 `FloatingLinesDebugger` 面板。
+
+### 可调参数
+
+| 分组       | 参数                                                                            |
+| ---------- | ------------------------------------------------------------------------------- |
+| 颜色       | `linesGradient` 4 色渐变                                                        |
+| 波浪层     | `enabledWaves`（top / middle / bottom）、每层 `lineCount` 与 `lineDistance`     |
+| 位置       | `topWavePosition` / `middleWavePosition` / `bottomWavePosition` 的 x、y、rotate |
+| 动画与交互 | `animationSpeed`、`interactive`、`bendRadius`、`bendStrength`、`mouseDamping`   |
+| 视差与混合 | `parallax`、`parallaxStrength`、`mixBlendMode`                                  |
+
+### 实装流程
+
+1. 在 `/?debug=floating-lines` 中调节到满意效果。
+2. 点击面板右上角「导出 JSON」或复制底部文本框内容。
+3. 将 JSON 中的字段覆盖 `src/components/background/BackgroundLayer.jsx` 中的 `FLOATING_LINES_PRESET`。
+4. 移除 URL query，刷新页面验证默认渲染效果。
+
+调试面板仅影响开发态；未带 `?debug=floating-lines` 时，`BackgroundLayer` 仍使用 `FLOATING_LINES_PRESET`，与改动前行为一致。
+
 ## 验收要点
 
 - 首页背景能看到多层漂浮线条，但照片柱体和 Banner 仍是视觉主体。
@@ -64,3 +91,4 @@ AppLayout
 - 鼠标移动时线条有轻微弯曲和视差，不影响 OrbitControls。
 - 移动端线条透明度降低，不遮挡模型。
 - 降低动态偏好下不启动动态线条。
+- 调试面板参数调整后，FloatingLines2D 实时响应；导出 JSON 可直接替换 `FLOATING_LINES_PRESET`。
