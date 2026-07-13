@@ -232,6 +232,20 @@ export function ThemeDirectory({ mode = 'overlay', open, onClose, onNavigate }) 
                 >
                     主题目录
                 </h2>
+                <div className={styles.headActions}>
+                    <nav className={styles.viewSwitch} aria-label="视图切换">
+                        {VIEWS.map((v) => (
+                            <button
+                                key={v.id}
+                                className={`${styles.viewBtn} ${view === v.id ? styles.viewBtnActive : ''}`}
+                                onClick={() => handleViewChange(v.id)}
+                                aria-pressed={view === v.id}
+                            >
+                                {v.label}
+                            </button>
+                        ))}
+                    </nav>
+                </div>
             </div>
 
             <div ref={contentRef} className={styles.listWrap}>
@@ -241,18 +255,7 @@ export function ThemeDirectory({ mode = 'overlay', open, onClose, onNavigate }) 
             </div>
 
             <div className={styles.foot}>
-                <nav className={styles.viewSwitch} aria-label="视图切换">
-                    {VIEWS.map((v) => (
-                        <button
-                            key={v.id}
-                            className={`${styles.viewBtn} ${view === v.id ? styles.viewBtnActive : ''}`}
-                            onClick={() => handleViewChange(v.id)}
-                            aria-pressed={view === v.id}
-                        >
-                            {v.label}
-                        </button>
-                    ))}
-                </nav>
+                <span className={styles.wanderTitle}>探索更多</span>
                 <div className={styles.progress} aria-hidden="true">
                     <svg viewBox="0 0 60 60" className={styles.progressSvg}>
                         <circle cx="30" cy="30" r="28" className={styles.progressTrack} />
