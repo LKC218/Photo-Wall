@@ -23,11 +23,11 @@ export function PageTransitionProvider({ children, onNavigate }) {
 
     const containerRef = useRef(null);
     const wipeRef = useRef(null);
-    const isAnimatingRef = useRef(false);
+    const phaseRef = useRef('idle');
     const childrenRef = useRef(children);
     const reducedMotionRef = useRef(false);
-    const pendingHrefRef = useRef(null);
     const frameRefs = useRef([]);
+    const timelineRef = useRef(null);
 
     childrenRef.current = children;
 
@@ -37,31 +37,60 @@ export function PageTransitionProvider({ children, onNavigate }) {
         return () => {
             frameRefs.current.forEach((id) => cancelAnimationFrame(id));
             frameRefs.current = [];
+            timelineRef.current?.kill();
         };
     }, []);
 
     const finishTransition = useCallback(() => {
-        isAnimatingRef.current = false;
+        phaseRef.current = 'idle';
         setIsTransitioning(false);
-
-        if (pendingHrefRef.current) {
-            const href = pendingHrefRef.current;
-            pendingHrefRef.current = null;
-            onNavigate(href);
-        }
-    }, [onNavigate]);
-
-    const scheduleEnterTransition = useCallback((nextPath) => {
-        const firstFrame = requestAnimationFrame(() => {
-            const secondFrame = requestAnimationFrame(() => {
-                setCurrentPath(nextPath);
-            });
-            frameRefs.current.push(secondFrame);
-        });
-        frameRefs.current.push(firstFrame);
     }, []);
 
-    // 路径变化时播放退出动画
+    const playEnterTransition = useCallback(() => {
+        phaseRef.current = 'entering';
+
+        const tl = gsap.timeline({
+            defaults: { ease: 'power3.inOut' },
+            onComplete: finishTransition,
+        });
+        timelineRef.current = tl;
+
+        tl.set(containerRef.current, { y: '8vh', opacity: 0.72 });
+        tl.set(wipeRef.current, { yPercent: 0 });
+        tl.to(wipeRef.current, { yPercent: -100, duration: 0.72 }, 0.16);
+        tl.to(containerRef.current, { y: 0, opacity: 1, duration: 0.64 }, 0.28);
+    }, [finishTransition]);
+
+    const revealNewPage = useCallback(
+        (nextPath) => {
+            setDisplayChildren(childrenRef.current);
+            setCurrentPath(nextPath);
+
+            // 等待新路由的首帧提交，始终在已覆盖的黑幕下开始进入动画。
+            const firstFrame = requestAnimationFrame(() => {
+                const secondFrame = requestAnimationFrame(playEnterTransition);
+                frameRefs.current.push(secondFrame);
+            });
+            frameRefs.current.push(firstFrame);
+        },
+        [playEnterTransition]
+    );
+
+    const playExitTransition = useCallback((onCovered) => {
+        phaseRef.current = 'leaving';
+        setIsTransitioning(true);
+        gsap.set(wipeRef.current, { yPercent: 100 });
+
+        const tl = gsap.timeline({
+            defaults: { ease: 'power3.inOut' },
+            onComplete: onCovered,
+        });
+        timelineRef.current = tl;
+
+        tl.to(containerRef.current, { y: '-8vh', opacity: 0.72, duration: 0.48 }, 0);
+        tl.to(wipeRef.current, { yPercent: 0, duration: 0.68 }, 0.04);
+    }, []);
+
     useEffect(() => {
         if (pathname === currentPath) return;
 
@@ -71,48 +100,16 @@ export function PageTransitionProvider({ children, onNavigate }) {
             return;
         }
 
-        if (isAnimatingRef.current) return;
-        isAnimatingRef.current = true;
-        setIsTransitioning(true);
+        if (phaseRef.current === 'waiting-route') {
+            revealNewPage(pathname);
+            return;
+        }
 
-        const tl = gsap.timeline({
-            defaults: { ease: 'power3.inOut' },
-            onComplete: () => {
-                setDisplayChildren(childrenRef.current);
-                scheduleEnterTransition(pathname);
-            },
-        });
-
-        tl.to(
-            containerRef.current,
-            {
-                y: '-8vh',
-                opacity: 0.72,
-                duration: 0.48,
-            },
-            0
-        );
-
-        tl.fromTo(wipeRef.current, { y: '100%' }, { y: '0%', duration: 0.68 }, 0.04);
-    }, [pathname, currentPath, scheduleEnterTransition]);
-
-    // 新页面进入动画
-    useEffect(() => {
-        if (!isAnimatingRef.current) return;
-
-        const tl = gsap.timeline({
-            defaults: { ease: 'power3.inOut' },
-            onComplete: finishTransition,
-        });
-
-        tl.set(containerRef.current, { y: '8vh', opacity: 0.72 });
-        tl.set(wipeRef.current, { y: '0%' });
-
-        // 黑幕短暂停留后释放，新页面跟随遮罩平稳进入
-        tl.to(wipeRef.current, { y: '-100%', duration: 0.72 }, 0.16);
-
-        tl.to(containerRef.current, { y: '0', opacity: 1, duration: 0.64 }, 0.28);
-    }, [currentPath, finishTransition]);
+        // 浏览器前进、后退等非受控路由变化的兜底处理。
+        if (phaseRef.current === 'idle') {
+            playExitTransition(() => revealNewPage(pathname));
+        }
+    }, [currentPath, pathname, playExitTransition, revealNewPage]);
 
     const navigateWithTransition = useCallback(
         (href) => {
@@ -121,14 +118,14 @@ export function PageTransitionProvider({ children, onNavigate }) {
                 onNavigate(href);
                 return;
             }
-            if (isAnimatingRef.current) {
-                pendingHrefRef.current = href;
-                return;
-            }
-            pendingHrefRef.current = null;
-            onNavigate(href);
+            if (phaseRef.current !== 'idle') return;
+
+            playExitTransition(() => {
+                phaseRef.current = 'waiting-route';
+                onNavigate(href);
+            });
         },
-        [onNavigate, pathname]
+        [onNavigate, pathname, playExitTransition]
     );
 
     return (

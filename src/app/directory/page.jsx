@@ -1,10 +1,10 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { ThemeDirectory } from '@/components/theme/ThemeDirectory';
+import { usePageTransition } from '@/components/transition/PageTransition';
 
 export default function DirectoryPage() {
-    const router = useRouter();
+    const { navigateWithTransition } = usePageTransition();
 
-    return <ThemeDirectory mode="page" onNavigate={(href) => router.push(href)} />;
+    return <ThemeDirectory mode="page" onNavigate={navigateWithTransition} />;
 }
