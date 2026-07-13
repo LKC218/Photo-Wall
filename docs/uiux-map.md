@@ -13,8 +13,8 @@
 - **职责**：承载 BackgroundLayer / Header / 页面 `children` / 透明 3D Scene / Footer，并管理路由高亮、页面过渡与全局主题状态；Footer 视图切换仅在 3D 视图页显示。
 - **关键交互/样式要点**
     - `'use client'`；`useRef` 持有滚动容器；`usePathname()` 判断当前路由并给 Footer 按钮加 `className="active"`，同时以 `pathname === '/' || pathname === '/paper'` 控制 FooterNav 只在塔式与纸片页渲染。
-    - 页面 `children` 经 `PageTransitionProvider` 包裹，通过 `onNavigate` prop 将 `router.push` 委托给 Provider，Provider 在路径变化时播放 GSAP 过渡动画。
-    - `BackgroundLayer` 位于 Scene 下方，读取 `pathname` 与当前主题输出固定全屏 2D 背景；`Header` 与 `FooterNav` 均位于 `PageTransitionProvider` 外部，通过 `onNavigate` 回调触发路由；FooterNav 仅在 `/` 与 `/paper` 渲染，避免主题目录页出现 3D 视图切换入口。
+    - 整个应用壳经 `PageTransitionProvider` 托管；导航先播放退出与黑幕覆盖，覆盖完成后才由 `onNavigate` 执行 `router.push`，新路由首帧始终在黑幕下提交。
+    - `BackgroundLayer` 位于 Scene 下方，读取 `pathname` 与当前主题输出固定全屏 2D 背景；`Header`、`FooterNav` 与目录页均通过 `usePageTransition()` 提供的 `navigateWithTransition` 发起导航；FooterNav 仅在 `/` 与 `/paper` 渲染，避免主题目录页出现 3D 视图切换入口。
     - 滚动容器内联：`position:relative; width/height:100%; overflow:auto; touchAction:auto`。
     - Scene 经 `next/dynamic`（ssr:false）动态导入，固定全屏 `position:fixed; 100vw×100vh; zIndex:1; background:transparent`，传入 `eventSource={ref}`、`eventPrefix="client"`，使 R3F 监听 DOM 滚动容器而非 window。
     - 整体以 `ThemeProvider` 包裹，所有页面共享同一当前主题；`ThemeDirectory` 已改为独立路由 `/directory`，AppLayout 不再维护目录面板 state。
@@ -45,7 +45,7 @@
 
 ### 3.1 主题目录页 `src/app/directory/page.jsx`
 
-- **要点**：`'use client'`；从 `next/navigation` 取 `useRouter`；渲染 `<ThemeDirectory mode="page" onNavigate={(href) => router.push(href)} />`；点击主题项或返回按钮均通过 `router.push('/')` 触发 `PageTransition` 路由过渡并回到主页。
+- **要点**：`'use client'`；从 `components/transition` 取 `usePageTransition`；渲染 `<ThemeDirectory mode="page" onNavigate={navigateWithTransition} />`；点击主题项或返回按钮先完成黑幕覆盖，再跳转回主页。
 - **依赖**：import `components/theme/ThemeDirectory`、`next/navigation`(useRouter)。
 
 ### 4. UI 模块出口 `src/components/ui/modules/index.js`
@@ -63,14 +63,14 @@
 
 - `Header.jsx`（`'use client'`）：tux.co 风格圆角胶囊导航条。接收 `onNavigate` 与 `pathname`；品牌名"照片墙"与"主题目录"按钮文字均经 `RollingText` 包裹：默认显示原文字，悬停时逐字向上滚动露出强调色副本（复刻 gabrielcojea "Rolling Text Hover"）。"主题目录"按钮点击后调用 `onNavigate('/directory')`，`active` 选中态由 `pathname === '/directory'` 决定。
 - `Header.module.scss`：**要点** `.header` `position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:1000; mix-blend-mode:difference; color:#fff; pointer-events:none`（居中悬浮，胶囊不挡滚动）；`.pill` `display:flex; gap:1.5rem; padding:0.55rem 1.4rem; border-radius:999px; background:rgba(255,255,255,0.12); backdrop-filter:blur(8px); pointer-events:auto`；`.directory` 大写宽字距，悬停下划线 `scaleX` 动画。**关键 UX**：`mix-blend-mode:difference` 让胶囊在任意背景上反色可见。
-- **依赖**：被 `AppLayout` import；`onNavigate` 与 `pathname` 由 AppLayout 注入。
+- **依赖**：被 `AppLayout` import；`onNavigate` 为 `usePageTransition()` 提供的 `navigateWithTransition`，`pathname` 由 AppLayout 注入。
 
 ### 7. 主题切换 UI `src/components/theme/`
 
 - `ThemeDirectory.jsx`（`'use client'`）：主题目录组件，支持两种模式：
     - `mode='overlay'`（遗留）：经 `react-dom` 的 `createPortal` 渲染到 `document.body`，由 `open`/`onClose` 控制，选择主题后关闭面板；若当前不在 `/` 且传入 `onNavigate`，则导航回塔式照片墙。
     - `mode='page'`（当前默认）：由 `src/app/directory/page.jsx` 直接渲染，作为独立路由 `/directory`；选择主题或点击返回按钮时通过 `onNavigate('/')` 返回首页并切换主题。
-    - 统一行为：读取 `useTheme()` 的 `themes`/`activeId`/`setActiveTheme`，维护 `view` 状态（`list`/`editorial`/`grid`）；顶部提供三种视图切换按钮；List 视图以主题行展示名称、标签和缩略图；切换视图时使用 GSAP Flip 对带 `data-flip-id` 的图片做跨视图位移动画，并带锁防止快速连续切换；列表入场只对行项目做轻量 `y:64→0` 与 `opacity` stagger，避免父子双层大位移造成字体抖动；当前主题以左侧常驻占位圆点或网格边框标识；底部「探索更多」大标题 + SVG 滚动进度环。
+    - 统一行为：读取 `useTheme()` 的 `themes`/`activeId`/`setActiveTheme`，维护 `view` 状态（`list`/`editorial`/`grid`）；底部固定栏提供 List/Editorial/Grid 三种视图切换胶囊按钮（复刻 tux.co Work 页底部导航栏），右侧并排放置 SVG 滚动进度环；List 视图以主题行展示名称、标签和缩略图；切换视图时使用 GSAP Flip 对带 `data-flip-id` 的图片做跨视图位移动画，并带锁防止快速连续切换；列表入场只对行项目做轻量 `y:64→0` 与 `opacity` stagger，避免父子双层大位移造成字体抖动；当前主题以左侧常驻占位圆点或网格边框标识。
 - `ThemeDirectory.module.scss`：**要点** `.panel` 为 `position:fixed; inset:0; z-index:2000; background:#fff` 全屏 flex 列（head/内容/foot），`.page` 模式下改为 `position:relative; min-height:100svh; z-index:auto`；`.viewSwitch` 为圆角胶囊按钮组；`.row` 为稳定高度的纵向主题行，使用 `will-change: transform, opacity` 和 `translateZ(0)` 承接 GSAP 轻位移动画；`.part1` 固定最小高度，`.dot` 常驻占位并由 active 控制显隐，避免主题切换时文字横向跳动；hover 效果限制在 `@media (hover:hover) and (pointer:fine)`，通过 `::before` 伪元素实现黑色背景条自底部 `scaleY(0→1)` 展开；`.trait` 顶部 1px 分隔线并仅声明 `will-change: transform`；缩略图固定 64px。
 - **依赖**：import `context/ThemeContext`、`gsap`（Flip/stagger）、`react`（useEffect/useRef/useState）、`react-dom`（createPortal）。被 `app/directory/page.jsx` 以 `mode='page'` 挂载；`overlay` 模式下可由父组件控制。
 
@@ -174,8 +174,8 @@
     - 监听 `usePathname()` 变化；路径变化时先播放退出动画，再切换 `displayChildren`，随后通过双 `requestAnimationFrame` 等待新页面首帧提交，最后播放进入动画，避免黑幕释放撞上新页面挂载。
     - **退出段**：`containerRef` 轻微上移 `-8vh` 且仅淡至 `opacity:0.72`（0.48s，`power3.inOut`）；`wipeRef` 黑色遮罩从 `translateY(100%)` 升起至 `0`（0.68s，延迟 0.04s），保留 TUX 式接管但放慢黑幕速度。
     - **进入段**：新内容初始设为 `translateY(8vh)`、`opacity:0.72`；遮罩先短暂停留，再从 `translateY(0)` 上滑至 `translateY(-100%)`（0.72s，延迟 0.16s）；新内容在遮罩释放时跟随上滑至 `0` 并淡入（0.64s，延迟 0.28s）。
-    - `onNavigate` prop 解耦实际路由跳转（由 `AppLayout` 通过 `router.push` 执行），Provider 只负责动画时序。
-    - 提供 `usePageTransition()` Context，返回 `{ navigateWithTransition, isTransitioning }`，供内部组件触发过渡。
+    - 导航调用先进入退出阶段，黑幕完全覆盖后才由 `onNavigate` 执行 `router.push`；新页面首帧在黑幕下提交后进入离场阶段。
+    - 提供 `usePageTransition()` Context，返回 `{ navigateWithTransition, isTransitioning }`，供 Header、Footer 与目录页触发过渡。
     - 动画期间缓存新导航请求（`pendingHrefRef`），进入动画完成后自动执行；快速点击不会崩溃。
     - 支持 `prefers-reduced-motion: reduce`，该模式下直接切换无动画。
 - **依赖**：import `gsap`、`next/navigation`（`usePathname`）；被 `AppLayout` 引用。
