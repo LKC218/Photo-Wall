@@ -11,19 +11,19 @@ import styles from './ThemeDirectory.module.scss';
 gsap.registerPlugin(Flip);
 
 const VIEWS = [
-    { id: 'list', label: 'List View' },
-    { id: 'editorial', label: 'Editorial View' },
-    { id: 'grid', label: 'Grid View' },
+    { id: 'list', label: '列表视图' },
+    { id: 'grid', label: '网格视图' },
 ];
 
 export function ThemeDirectory({ mode = 'overlay', open, onClose, onNavigate }) {
-    const { themes, activeId, setActiveTheme } = useTheme();
+    const { themes, activeId, setActiveTheme, updateThemeImportedAt, resetThemeImportedAt } =
+        useTheme();
+    const pathname = usePathname();
     const panelRef = useRef(null);
     const contentRef = useRef(null);
     const flippingRef = useRef(false);
     const entranceTlRef = useRef(null);
     const [view, setView] = useState('list');
-    const [progress, setProgress] = useState(0);
     const viewRef = useRef(view);
 
     const isPage = mode === 'page';
@@ -145,18 +145,6 @@ export function ThemeDirectory({ mode = 'overlay', open, onClose, onNavigate }) 
         };
     }, [open, isPage]);
 
-    useEffect(() => {
-        const wrap = contentRef.current;
-        if (!wrap) return;
-        const onScroll = () => {
-            const max = wrap.scrollHeight - wrap.clientHeight;
-            setProgress(max > 0 ? wrap.scrollTop / max : 0);
-        };
-        wrap.addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
-        return () => wrap.removeEventListener('scroll', onScroll);
-    }, [view]);
-
     if (!isPage && !open) return null;
 
     const handleSelect = (id) => {
@@ -232,44 +220,26 @@ export function ThemeDirectory({ mode = 'overlay', open, onClose, onNavigate }) 
                 >
                     主题目录
                 </h2>
-                <div className={styles.headActions}>
-                    <nav className={styles.viewSwitch} aria-label="视图切换">
-                        {VIEWS.map((v) => (
-                            <button
-                                key={v.id}
-                                className={`${styles.viewBtn} ${view === v.id ? styles.viewBtnActive : ''}`}
-                                onClick={() => handleViewChange(v.id)}
-                                aria-pressed={view === v.id}
-                            >
-                                {v.label}
-                            </button>
-                        ))}
-                    </nav>
-                </div>
             </div>
 
             <div ref={contentRef} className={styles.listWrap}>
                 {view === 'list' && <ListView {...commonProps} />}
-                {view === 'editorial' && <EditorialView {...commonProps} />}
                 {view === 'grid' && <GridView {...commonProps} />}
             </div>
 
             <div className={styles.foot}>
-                <span className={styles.wanderTitle}>探索更多</span>
-                <div className={styles.progress} aria-hidden="true">
-                    <svg viewBox="0 0 60 60" className={styles.progressSvg}>
-                        <circle cx="30" cy="30" r="28" className={styles.progressTrack} />
-                        <circle
-                            cx="30"
-                            cy="30"
-                            r="28"
-                            className={styles.progressBar}
-                            style={{
-                                strokeDashoffset: 176 - 176 * progress,
-                            }}
-                        />
-                    </svg>
-                </div>
+                <nav className={styles.viewSwitch} aria-label="视图切换">
+                    {VIEWS.map((v) => (
+                        <button
+                            key={v.id}
+                            className={`${styles.viewBtn} ${view === v.id ? styles.viewBtnActive : ''}`}
+                            onClick={() => handleViewChange(v.id)}
+                            aria-pressed={view === v.id}
+                        >
+                            {v.label}
+                        </button>
+                    ))}
+                </nav>
             </div>
         </div>
     );
@@ -286,9 +256,9 @@ function ThemeName({ theme }) {
     );
 }
 
-function Tags({ tags }) {
+function Tags({ tags, className = '' }) {
     return (
-        <ul className={styles.tags}>
+        <ul className={`${styles.tags} ${className}`}>
             {(tags || []).map((tag, i) => (
                 <li key={i} className={styles.tag}>
                     {tag}
@@ -298,23 +268,119 @@ function Tags({ tags }) {
     );
 }
 
+function formatImportedAt(importedAt) {
+    if (!importedAt) return '日期未设置';
+    const [year, month, day] = importedAt.split('-').map(Number);
+    return `${year}年${month}月${day}日`;
+}
+
+function ThemeDate({ theme, onUpdate, onReset }) {
+    const [isEditing, setIsEditing] = useState(false);
+    const [draft, setDraft] = useState(theme.importedAt || '');
+
+    useEffect(() => {
+        if (!isEditing) setDraft(theme.importedAt || '');
+    }, [isEditing, theme.importedAt]);
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        if (!draft) return;
+        onUpdate(theme.id, draft);
+        setIsEditing(false);
+    };
+
+    if (isEditing) {
+        return (
+            <form className={`${styles.dateMeta} ${styles.dateEditing}`} onSubmit={handleSubmit}>
+                <label className={styles.srOnly} htmlFor={`theme-date-${theme.id}`}>
+                    导入日期
+                </label>
+                <input
+                    id={`theme-date-${theme.id}`}
+                    className={styles.dateInput}
+                    type="date"
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                    autoFocus
+                    required
+                />
+                <span className={styles.dateActions}>
+                    <button className={styles.dateAction} type="submit">
+                        保存
+                    </button>
+                    <button
+                        className={styles.dateAction}
+                        type="button"
+                        onClick={() => setIsEditing(false)}
+                    >
+                        取消
+                    </button>
+                </span>
+            </form>
+        );
+    }
+
+    return (
+        <div className={styles.dateMeta}>
+            <time className={styles.dateValue} dateTime={theme.importedAt}>
+                {formatImportedAt(theme.importedAt)}
+            </time>
+            <span className={styles.dateActions}>
+                <button
+                    className={styles.dateAction}
+                    type="button"
+                    onClick={() => setIsEditing(true)}
+                >
+                    修改日期
+                </button>
+                {theme.hasCustomImportedAt && (
+                    <button
+                        className={styles.dateAction}
+                        type="button"
+                        onClick={() => onReset(theme.id)}
+                    >
+                        恢复默认
+                    </button>
+                )}
+            </span>
+        </div>
+    );
+}
+
 function ListView({ themes, activeId, onSelect }) {
+    const { updateThemeImportedAt, resetThemeImportedAt } = useTheme();
+
     return (
         <div className={styles.list} data-view="list">
             {themes.map((theme, themeIndex) => {
                 const isActive = theme.id === activeId;
                 const thumbs = theme.images.slice(0, 5);
                 return (
-                    <button
+                    <article
                         key={theme.id}
                         data-animate="row"
                         className={`${styles.row} ${isActive ? styles.active : ''}`}
-                        onClick={() => onSelect(theme.id)}
                     >
+                        <button
+                            className={styles.selectTheme}
+                            type="button"
+                            onClick={() => onSelect(theme.id)}
+                            aria-label={`选择主题：${theme.name}`}
+                        />
                         <span className={styles.trait} data-animate="trait" />
                         <div className={styles.part1} data-animate="part1">
                             <ThemeName theme={theme} />
-                            <Tags tags={theme.tags} />
+                        </div>
+                        <div className={styles.metaInfo} data-animate="part1">
+                            <Tags
+                                tags={(theme.tags || []).slice(0, 1)}
+                                className={styles.listTags}
+                            />
+                            <ThemeDate
+                                theme={theme}
+                                onUpdate={updateThemeImportedAt}
+                                onReset={resetThemeImportedAt}
+                            />
                         </div>
                         <div className={styles.part2}>
                             {thumbs.map((img, i) => (
@@ -330,41 +396,7 @@ function ListView({ themes, activeId, onSelect }) {
                                 </span>
                             ))}
                         </div>
-                    </button>
-                );
-            })}
-        </div>
-    );
-}
-
-function EditorialView({ themes, activeId, onSelect }) {
-    return (
-        <div className={styles.editorial} data-view="editorial">
-            {themes.map((theme, idx) => {
-                const isActive = theme.id === activeId;
-                const img = theme.cover ? { url: theme.cover } : theme.images[0];
-                return (
-                    <button
-                        key={theme.id}
-                        data-animate="row"
-                        className={`${styles.edItem} ${isActive ? styles.active : ''} ${idx % 3 === 1 ? styles.edPush : ''}`}
-                        onClick={() => onSelect(theme.id)}
-                    >
-                        <span className={styles.trait} />
-                        <div className={styles.edCoverWrap}>
-                            <img
-                                src={img.url}
-                                alt=""
-                                className={styles.edCover}
-                                data-flip-id={`img-${theme.id}-0`}
-                                loading="lazy"
-                            />
-                        </div>
-                        <div className={styles.edInfo}>
-                            <ThemeName theme={theme} />
-                            <Tags tags={theme.tags} />
-                        </div>
-                    </button>
+                    </article>
                 );
             })}
         </div>
